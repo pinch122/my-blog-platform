@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Blog</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; background: #f9f9f9; }
+    .post { background: white; padding: 20px; margin-bottom: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .post h2 { margin-top: 0; }
+    .post small { color: gray; }
+    form { margin-bottom: 30px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    input, textarea { width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    #search { padding: 10px; width: 100%; margin-bottom: 30px; border-radius: 5px; border: 1px solid #ccc; }
+    .delete-btn { float: right; background: red; padding: 5px 10px; color: white; border: none; border-radius: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>📝 My Blog Posts</h1>
+
+  <form id="new-post-form">
+    <input type="text" id="title" placeholder="Title" required />
+    <input type="text" id="author" placeholder="Author" required />
+    <textarea id="content" placeholder="Write your post here..." required></textarea>
+    <button type="submit">Post</button>
+  </form>
+
+  <input type="text" id="search" placeholder="Search by title or author...">
+
+  <div id="posts"></div>
+
+  <script>
+    const form = document.getElementById('new-post-form');
+    const searchInput = document.getElementById('search');
+    const postsContainer = document.getElementById('posts');
+
+    const renderPosts = (posts) => {
+      postsContainer.innerHTML = '';
+      posts.forEach(post => {
+        const div = document.createElement('div');
+        div.className = 'post';
+        div.innerHTML = `
+          <button class="delete-btn" onclick="deletePost('${post._id}')">Delete</button>
+          <h2>${post.title}</h2>
+          <small>By ${post.author} — ${new Date(post.createdAt).toLocaleString()}</small>
+          <p>${post.content}</p>
+        `;
+        postsContainer.appendChild(div);
+      });
+    };
+
+    const fetchPosts = async () => {
+      const res = await fetch('http://localhost:5000/api/posts');
+      const data = await res.json();
+      renderPosts(data);
+    };
+
+    const deletePost = async (id) => {
+      await fetch(`http://localhost:5000/api/posts/${id}`, {
+        method: 'DELETE'
+      });
+      fetchPosts();
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('title').value;
+      const author = document.getElementById('author').value;
+      const content = document.getElementById('content').value;
+
+      await fetch('http://localhost:5000/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, author, content })
+      });
+
+      form.reset();
+      fetchPosts();
+    });
+
+    searchInput.addEventListener('input', async () => {
+      const res = await fetch('http://localhost:5000/api/posts');
+      const posts = await res.json();
+      const query = searchInput.value.toLowerCase();
+      const filtered = posts.filter(post =>
+        post.title.toLowerCase().includes(query) ||
+        post.author.toLowerCase().includes(query)
+      );
+      renderPosts(filtered);
+    });
+
+    fetchPosts();
+  </script>
+</body>
+</html>

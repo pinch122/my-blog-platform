@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Post</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; background: #f2f2f2; }
+    form { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h1>Edit Post</h1>
+
+  <form id="edit-form">
+    <input type="text" id="title" placeholder="Title" required />
+    <input type="text" id="author" placeholder="Author" required />
+    <textarea id="content" placeholder="Write your post here..." required></textarea>
+    <button type="submit">Update</button>
+  </form>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('id');
+
+    const titleInput = document.getElementById('title');
+    const authorInput = document.getElementById('author');
+    const contentInput = document.getElementById('content');
+    const form = document.getElementById('edit-form');
+
+    const fetchPost = async () => {
+      const res = await fetch(`http://localhost:5000/api/posts/${postId}`);
+      const post = await res.json();
+      titleInput.value = post.title;
+      authorInput.value = post.author;
+      contentInput.value = post.content;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const updatedPost = {
+        title: titleInput.value,
+        author: authorInput.value,
+        content: contentInput.value,
+      };
+
+      await fetch(`http://localhost:5000/api/posts/${postId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedPost),
+      });
+
+      window.location.href = `/post.html?id=${postId}`; // Redirect to view page
+    });
+
+    fetchPost();
+  </script>
+
+</body>
+</html>

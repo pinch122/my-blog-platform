@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            padding: 20px;
+            margin: 0;
+            color: #333;
+        }
+        h2 {
+            text-align: center;
+            color: #2e3b4e;
+        }
+        .content {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .logout-btn {
+            padding: 12px 25px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .logout-btn:hover {
+            background-color: #e53935;
+        }
+        .user-info {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: left;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            margin: 0 auto;
+        }
+        .user-info p {
+            margin: 10px 0;
+        }
+        .error-message {
+            color: red;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Dashboard</h2>
+    <div class="content">
+        <p>Welcome to your protected Dashboard!</p>
+        <div id="errorMessage" class="error-message"></div> <!-- Display error messages here -->
+        <div class="user-info" id="userInfo">Loading user data...</div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        // Check if the token exists in localStorage
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+            // If no token, redirect to login page
+            window.location.href = '/login.html';
+        } else {
+            // Fetch user data from the backend using the token
+            fetch('http://localhost:5000/api/protected', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.user) {
+                    // Display user data in the dashboard
+                    document.getElementById('userInfo').innerHTML = `
+                        <p><strong>Username:</strong> ${data.user.username}</p>
+                        <p><strong>Email:</strong> ${data.user.email}</p>
+                    `;
+                } else {
+                    // If no user found, redirect to login
+                    window.location.href = '/login.html';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('errorMessage').innerText = 'Error fetching user data. Please try again later.';
+                setTimeout(() => {
+                    window.location.href = '/login.html'; // Redirect to login on error
+                }, 3000);
+            });
+        }
+
+        // Function to log out
+        function logout() {
+            // Remove the token from localStorage
+            localStorage.removeItem('token');
+            // Redirect to login page
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>

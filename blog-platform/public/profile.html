@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-info {
+            margin-bottom: 20px;
+        }
+        .profile-info p {
+            font-size: 18px;
+        }
+        .profile-edit {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin: 0 auto;
+        }
+        .profile-edit input,
+        .profile-edit textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .profile-edit button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .profile-edit button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-header">
+        <h1>User Profile</h1>
+        <!-- Display the profile picture here -->
+        <img id="profilePicture" src="default-profile-pic.png" alt="Profile Picture" width="150" height="150">
+    </div>
+
+    <div class="profile-info">
+        <h2>Bio</h2>
+        <!-- Display bio here -->
+        <p id="bio">No bio available.</p>
+    </div>
+
+    <div class="profile-info">
+        <h2>Username</h2>
+        <!-- Display username here -->
+        <input type="text" id="username" placeholder="Username" disabled>
+    </div>
+
+    <div class="profile-edit">
+        <h3>Edit Profile</h3>
+        <input type="text" id="bioInput" placeholder="Enter your bio">
+        <input type="file" id="profilePicInput" accept="image/*">
+        <button onclick="updateProfile()">Update Profile</button>
+    </div>
+
+    <script>
+        // Fetch profile data from the server and display it
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        fetch('http://localhost:5000/api/auth/profile', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.user) {
+                document.getElementById('profilePicture').src = data.user.profilePicture || 'default-profile-pic.png';
+                document.getElementById('bio').innerText = data.user.bio || 'No bio available.';
+                document.getElementById('username').value = data.user.username;
+            }
+        })
+        .catch(err => {
+            console.log('Error fetching user profile:', err);
+            window.location.href = '/login.html';
+        });
+
+        // Function to update profile
+        function updateProfile() {
+            const bio = document.getElementById('bioInput').value;
+            const profilePic = document.getElementById('profilePicInput').files[0];
+
+            // Simple validation
+            if (!bio && !profilePic) {
+                alert('Please provide either a bio or a profile picture to update.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('bio', bio);
+            if (profilePic) {
+                formData.append('profilePicture', profilePic);
+            }
+
+            fetch('http://localhost:5000/api/auth/update-profile', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert('Profile updated successfully!');
+                    window.location.reload();
+                }
+            })
+            .catch(err => {
+                console.log('Error updating profile:', err);
+                alert('Error updating profile.');
+            });
+        }
+    </script>
+
+</body>
+</html>

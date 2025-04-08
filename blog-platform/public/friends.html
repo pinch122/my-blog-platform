@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .send-request, .accept-request {
+            margin-bottom: 20px;
+        }
+        .send-request input, .accept-request input {
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .send-request button, .accept-request button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .send-request button:hover, .accept-request button:hover {
+            background-color: #45a049;
+        }
+        #friendsList p {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Friends</h1>
+
+    <!-- Send Friend Request Section -->
+    <div class="send-request">
+        <input type="text" id="receiverId" placeholder="Enter receiver's user ID" />
+        <button onclick="sendFriendRequest()">Send Friend Request</button>
+    </div>
+
+    <!-- Accept Friend Request Section -->
+    <div class="accept-request">
+        <input type="text" id="requestSenderId" placeholder="Enter sender's user ID" />
+        <button onclick="acceptFriendRequest()">Accept Friend Request</button>
+    </div>
+
+    <!-- Friends List Section -->
+    <div id="friendsList">
+        <!-- Friends list will be populated here -->
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('You are not logged in');
+            window.location.href = '/login.html';  // Redirect to login page if not logged in
+        }
+
+        // Send Friend Request Function
+        function sendFriendRequest() {
+            const receiverId = document.getElementById('receiverId').value;
+
+            if (!receiverId) {
+                alert('Please enter a valid user ID');
+                return;
+            }
+
+            fetch('http://localhost:5000/api/friends/send-request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ receiverId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Friend request sent');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Accept Friend Request Function
+        function acceptFriendRequest() {
+            const senderId = document.getElementById('requestSenderId').value;
+
+            if (!senderId) {
+                alert('Please enter a valid sender ID');
+                return;
+            }
+
+            fetch('http://localhost:5000/api/friends/accept-request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ senderId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Friend request accepted!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Fetch and Display Friends List
+        fetch('http://localhost:5000/api/friends/friends', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            const friendsList = document.getElementById('friendsList');
+            if (data.friends && data.friends.length > 0) {
+                data.friends.forEach(friend => {
+                    friendsList.innerHTML += `<p>${friend.username}</p>`;
+                });
+            } else {
+                friendsList.innerHTML = '<p>No friends found</p>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    </script>
+
+</body>
+</html>

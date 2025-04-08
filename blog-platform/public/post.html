@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>View Post</title>
+  <style>
+    body { font-family: sans-serif; padding: 40px; background: #f2f2f2; }
+    .post { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .post h1 { margin-top: 0; }
+    .post small { color: gray; display: block; margin-bottom: 20px; }
+    .post p { font-size: 18px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="post" id="post">
+    <h1>Loading...</h1>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get('id');
+
+    const fetchPost = async () => {
+      const res = await fetch(`http://localhost:5000/api/posts/${postId}`);
+      const post = await res.json();
+
+      const container = document.getElementById('post');
+      container.innerHTML = `
+        <h1>${post.title}</h1>
+        <small>By ${post.author} — ${new Date(post.createdAt).toLocaleString()}</small>
+        <p>${post.content}</p>
+      `;
+    };
+
+    fetchPost();
+  </script>
+</body>
+</html>
