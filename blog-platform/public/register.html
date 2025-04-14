@@ -1,44 +1,187 @@
-<!-- register.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Nunito', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(-45deg, #ffecd2, #fcb69f, #a18cd1, #fbc2eb);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      background: #ffffffee;
+      padding: 40px 30px;
+      border-radius: 25px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #333;
+      font-size: 28px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #a18cd1;
+      box-shadow: 0 0 8px #a18cd170;
+      transform: scale(1.03);
+      outline: none;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 15px 0;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .checkbox input {
+      margin-right: 10px;
+      accent-color: #a18cd1;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      background: linear-gradient(to right, #a18cd1, #fbc2eb);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.04);
+      box-shadow: 0 6px 15px rgba(161, 140, 209, 0.4);
+    }
+
+    .message {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .message.error {
+      color: #d32f2f;
+    }
+
+    .message.success {
+      color: #388e3c;
+    }
+  </style>
 </head>
 <body>
-    <h2>Register</h2>
+  <div class="container">
+    <h2>Create Your Account</h2>
     <form id="registerForm">
-        <input type="text" id="username" placeholder="Username" required />
-        <input type="email" id="email" placeholder="Email" required />
-        <input type="password" id="password" placeholder="Password" required />
-        <button type="submit">Register</button>
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <div class="checkbox">
+        <input type="checkbox" id="terms" required />
+        <label for="terms">I agree to the <a href="#" style="color:#a18cd1;">Terms & Conditions</a></label>
+      </div>
+      <button type="submit">Register</button>
+      <div class="message" id="messageBox"></div>
     </form>
+  </div>
 
-    <script>
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const messageBox = document.getElementById('messageBox');
+      messageBox.textContent = '';
+      messageBox.className = 'message';
 
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const terms = document.getElementById('terms').checked;
 
-            const response = await fetch('http://localhost:5000/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, email, password }),
-            });
+      if (!terms) {
+        messageBox.textContent = '❌ You must agree to the terms and conditions.';
+        messageBox.classList.add('error');
+        return;
+      }
 
-            const data = await response.json();
-            if (data.message) {
-                alert('Registration successful!');
-                window.location.href = '/login.html'; // Redirect to login
-            } else {
-                alert('Registration failed: ' + (data.error || 'Unknown error occurred'));
-            }
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, email, password }),
         });
-    </script>
+
+        const data = await response.json();
+        if (data.message) {
+          messageBox.textContent = '✅ Registration successful! Redirecting...';
+          messageBox.classList.add('success');
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 1500);
+        } else {
+          messageBox.textContent = '❌ ' + (data.error || 'Registration failed');
+          messageBox.classList.add('error');
+        }
+      } catch (error) {
+        messageBox.textContent = '❌ Network error. Please try again.';
+        messageBox.classList.add('error');
+      }
+    });
+  </script>
 </body>
 </html>

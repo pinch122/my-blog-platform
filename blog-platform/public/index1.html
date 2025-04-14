@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome to BlogZone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #ffffff;
+      color: #2d2d2d;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    #welcome-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 7vw;
+      font-weight: 900;
+      color: #000000;
+      background: #fff;
+      padding: 40px 60px;
+      border-radius: 16px;
+      z-index: 9999;
+      animation: fadeInOut 4s ease-in-out forwards;
+      text-align: center;
+    }
+
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+      }
+      20% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+        visibility: hidden;
+      }
+    }
+
+    header {
+      padding: 20px 50px;
+      background-color: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 26px;
+      color: #6c63ff;
+    }
+
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #6c63ff;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #5f57ff;
+    }
+
+    .hero {
+      padding: 90px 20px;
+      text-align: center;
+      background: linear-gradient(to right, #ff6e7f, #bfe9ff);
+      color: #fff;
+    }
+
+    .hero h2 {
+      font-size: 42px;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    .buttons a {
+      padding: 14px 28px;
+      background-color: #6c63ff;
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: background-color 0.3s;
+      margin: 0 10px;
+      display: inline-block;
+    }
+
+    .buttons a:hover {
+      background-color: #5f57ff;
+    }
+
+    .section {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .section h3 {
+      color: #6c63ff;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .section p {
+      color: #555;
+      font-size: 17px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .feature {
+      background: #ffffff;
+      border: 2px solid #f4f4f4;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      padding: 25px;
+      width: 280px;
+      transition: all 0.3s ease;
+    }
+
+    .feature:hover {
+      transform: translateY(-5px);
+      border-color: #ff6e7f;
+    }
+
+    .feature h4 {
+      color: #ff6e7f;
+      margin-bottom: 10px;
+    }
+
+    footer {
+      background-color: #bfe9ff;
+      color: #333;
+      padding: 25px;
+      text-align: center;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Welcome Animation -->
+  <div id="welcome-message">WELCOME BLOGGERS</div>
+
+  <header>
+    <h1>BlogZone</h1>
+    <nav>
+      <a href="register.html">Register</a>
+      <a href="login.html">Login</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="create-post.html">New Post</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Write. Express. Inspire.</h2>
+    <p>Start your blogging journey today. Share your thoughts, stories, and ideas with the world in a creative space built just for you.</p>
+    <div class="buttons">
+      <a href="register.html">Register</a>
+      <a href="login.html">Login</a>
+      <a href="dashboard.html">Explore</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <h3>Why Choose BlogZone?</h3>
+    <p>Whether you're a passionate writer, a casual blogger, or a creative storyteller, BlogZone gives you the tools to craft beautiful blog posts with ease. Discover your voice, connect with your audience, and keep creating.</p>
+
+    <div class="features">
+      <div class="feature">
+        <h4>📝 Easy to Use</h4>
+        <p>Smooth and minimal editor to help you focus on your writing.</p>
+      </div>
+      <div class="feature">
+        <h4>🔐 Secure</h4>
+        <p>JWT-based login keeps your content private and secure.</p>
+      </div>
+      <div class="feature">
+        <h4>📊 Dashboard</h4>
+        <p>Track your posts and activity from a clean user dashboard.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    2025 BlogZone. All rights reserved.
+  </footer>
+
+</body>
+</html>

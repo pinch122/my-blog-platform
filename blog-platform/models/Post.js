@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const authMiddleware = require('../middleware/authMiddleware');
 
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   content: {
     type: String,
@@ -12,7 +12,7 @@ const postSchema = new mongoose.Schema({
   },
   author: {
     type: String,
-    default: "Anonymous"
+    default: 'Anonymous'
   },
   createdAt: {
     type: Date,
